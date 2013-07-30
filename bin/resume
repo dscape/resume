@@ -1,0 +1,36 @@
+#!/usr/bin/env node
+
+var fs     = require('fs')
+  , ejs    = require('ejs')
+  , f      = require('frameless')
+  , esctex = require('escape-latex')
+  ;
+
+f.save(true);
+
+ejs.filters.escape_latex = function (input) {
+  return esctex(input);
+};
+
+ejs.filters.join = function (input) {
+  return input.join('. ');
+};
+
+f({name: 'file', save: false}, {name: 'prefix', 'default': ''}, function (opts) {
+  var resume  = JSON.parse(fs.readFileSync(opts.file, 'utf-8'))
+    , layouts = 
+      [
+        { name      : 'latex'
+        , extension : 'tex'
+        , index     : fs.readFileSync(__dirname + '/../layouts/latex/index.ejs', 'utf-8')
+        , filename  : __dirname + '/../layouts/latex/index.ejs'
+        }
+      ]
+    ;
+    layouts.forEach(function (layout) {
+      console.log(layout.name);
+      var out = ejs.render(layout.index, { user: resume, filename: layout.filename });
+      fs.writeFileSync((opts.prefix === '' ? '' : (opts.prefix + '-')) +
+        'resume.' + layout.extension, out);
+    });
+});

@@ -1,0 +1,30 @@
+{
+  "name": "resume",
+  "version": "0.0.0",
+  "description": "a resume bin that generates stuff for you",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/dscape/resume.git"
+  },
+  "keywords": [
+    "resume",
+    "cli"
+  ],
+  "author": "nuno job (nunojobpinto@gmail.com)",
+  "license": "apache2 actually",
+  "bugs": {
+    "url": "https://github.com/dscape/resume/issues"
+  },
+  "dependencies": {
+    "frameless": "0.0.6",
+    "ejs": "~0.8.4",
+    "escape-latex": "~0.1.2"
+  },
+  "bin": {
+    "resume": "./bin/resume"
+  }
+}

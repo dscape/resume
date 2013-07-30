@@ -1,0 +1,35 @@
+<% if (section.title === 'Professional Experience') { %>
+\section{Professional Experience}
+% <% section.contents.forEach(function(job){ %>
+\href{<%- job.company.url %>}{\textbf{<%-: job.company.name | escape_latex %>}}, 
+<%-: job.company.location | escape_latex %>
+\begin{outerlist} <% job.positions.forEach(function(position){ %>
+  \item[] \textit{<%-: position.title | escape_latex %>}%
+          \hfill \textbf{<% if (position.dates.from) { %><%= position.dates.from %><% } %><% if (position.dates.to) { %><%= ' to ' + position.dates.to %><% } %>}<% if (position.responsibilities) { %>
+  \begin{innerlist}<% position.responsibilities.forEach(function(line){ %>
+    \item <%-: line | escape_latex %><% }) %>
+  \end{innerlist}
+<% } %><% }) %>
+\end{outerlist}
+\blankline
+<% }) %><% } else if (section.title === 'Education') { %>
+\section{Education}<% section.contents.forEach(function(school){ %> \href{<%-: school.url | escape_latex %>}{\textbf{<%-: school.school | escape_latex %>}}, 
+<%-: school.location | escape_latex %>
+
+<% if (school.degrees) { %>
+  \begin{outerlist}<% school.degrees.forEach(function(degree){ %>
+    \item[] <%-: degree.name | escape_latex %>,
+            \href{<%- degree.url %>}
+                 {<%-: degree.subject | escape_latex %>}<% if (degree.end) { %><%-: ', ' + degree.end | escape_latex %><% } %><% if (degree.desc) { %>
+            \begin{innerlist}
+            \item <%-: degree.desc | escape_latex %>
+            \end{innerlist}<% } %>
+<% }) %>
+  \end{outerlist}
+<% } %>
+\blankline
+
+<% }) %><% } else if (section.title === 'Other') { %>
+\section{Other}
+<%-: section.contents | join %>
+<% } %>

@@ -1,6 +1,6 @@
 {
   "name": "resume",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "a resume bin that generates stuff for you",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,8 @@
   "dependencies": {
     "frameless": "0.0.6",
     "ejs": "~0.8.4",
-    "escape-latex": "~0.1.2"
+    "escape-latex": "~0.1.2",
+    "request": "~2.25.0"
   },
   "bin": {
     "resume": "./bin/resume"

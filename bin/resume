@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 
-var fs     = require('fs')
-  , ejs    = require('ejs')
-  , f      = require('frameless')
-  , esctex = require('escape-latex')
+var fs      = require('fs')
+  , ejs     = require('ejs')
+  , f       = require('frameless')
+  , esctex  = require('escape-latex')
+  , request = require('request')
   ;
 
 f.save(true);
@@ -16,7 +17,15 @@ ejs.filters.join = function (input) {
   return input.join('. ');
 };
 
-f({name: 'file', save: false}, {name: 'prefix', 'default': ''}, function (opts) {
+function file_path_from_opts(opts, layout) {
+  return (opts.prefix === '' ? '' : (opts.prefix + '-')) +
+    'resume.' + layout.extension;
+}
+
+f( { name: 'file'     , save     : false                   }
+ , { name: 'prefix'   , 'default': ''                      }
+ , { name: 'pdflatex' , 'default': 'http://pdflatex.ae.gy' }
+ , function (opts) {
   var resume  = JSON.parse(fs.readFileSync(opts.file, 'utf-8'))
     , layouts = 
       [
@@ -24,13 +33,31 @@ f({name: 'file', save: false}, {name: 'prefix', 'default': ''}, function (opts) 
         , extension : 'tex'
         , index     : fs.readFileSync(__dirname + '/../layouts/latex/index.ejs', 'utf-8')
         , filename  : __dirname + '/../layouts/latex/index.ejs'
+        , renderer  : 'ejs'
+        }
+      , { name      : 'pdf'
+        , extension : 'pdf'
+        , renderer  : 'pdflatex'
         }
       ]
     ;
-    layouts.forEach(function (layout) {
-      console.log(layout.name);
-      var out = ejs.render(layout.index, { user: resume, filename: layout.filename });
-      fs.writeFileSync((opts.prefix === '' ? '' : (opts.prefix + '-')) +
-        'resume.' + layout.extension, out);
-    });
+
+  var tex = '';
+
+  layouts.forEach(function (layout) {
+    console.log(layout.name);
+    if(layout.renderer === 'ejs') {
+      tex = ejs.render(layout.index, { user: resume, filename: layout.filename });
+      fs.writeFileSync(file_path_from_opts(opts, layout), tex);
+    } else if (layout.renderer === 'pdflatex') {
+      //
+      // note that this assumes you generate the tex file first
+      //
+      request(
+        { method : 'POST'
+        , body   : tex
+        , uri    : opts.pdflatex
+        }).pipe(fs.createWriteStream(file_path_from_opts(opts, layout)));
+    }
+  });
 });

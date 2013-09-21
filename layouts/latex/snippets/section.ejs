@@ -29,7 +29,7 @@
 <% } %>
 \blankline
 
-<% }) %><% } else if (section.title === 'Other') { %>
-\section{Other}
+<% }) %><% } else { %>
+\section{<%-: section.title | escape_latex %>}
 <%-: section.contents | join %>
 <% } %>

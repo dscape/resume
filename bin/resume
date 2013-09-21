@@ -10,7 +10,9 @@ var fs      = require('fs')
 f.save(true);
 
 ejs.filters.escape_latex = function (input) {
-  return esctex(input);
+  var r = esctex(input);
+  r = r.replace(/\n/g, '\n\\blankline\n');
+  return r;
 };
 
 ejs.filters.join = function (input) {

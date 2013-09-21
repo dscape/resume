@@ -1,5 +1,5 @@
-<% if (section.title === 'Professional Experience') { %>
-\section{Professional Experience}
+\section{<%-: section.title | escape_latex %>}
+<% if (section.title === 'Professional Experience' || section.type === 'professional experience') { %>
 % <% section.contents.forEach(function(job){ %>
 \href{<%- job.company.url %>}{\textbf{<%-: job.company.name | escape_latex %>}}, 
 <%-: job.company.location | escape_latex %>
@@ -12,8 +12,8 @@
 <% } %><% }) %>
 \end{outerlist}
 \blankline
-<% }) %><% } else if (section.title === 'Education') { %>
-\section{Education}<% section.contents.forEach(function(school){ %> \href{<%-: school.url | escape_latex %>}{\textbf{<%-: school.school | escape_latex %>}}, 
+<% }) %><% } else if (section.title === 'Education' || section.type === 'education') { %>
+<% section.contents.forEach(function(school){ %> \href{<%-: school.url | escape_latex %>}{\textbf{<%-: school.school | escape_latex %>}},
 <%-: school.location | escape_latex %>
 
 <% if (school.degrees) { %>
@@ -29,7 +29,14 @@
 <% } %>
 \blankline
 
-<% }) %><% } else { %>
-\section{<%-: section.title | escape_latex %>}
-<%-: section.contents | join %>
+<% }) %><% } else if (section.title === 'Skills' || section.type === 'skills') { %>
+\begin{outerlist}<% section.contents.skills.forEach(function (skill) { %>
+  \item[] \textit{<%- skill.title %>}
+  \begin{innerlist}
+  <% skill.details.forEach(function (line) {%>
+    \item <%-: line | escape_latex %><% }) %>
+  \end{innerlist}
+\end{outerlist}<% }) %>
+<% } else if (section.type === 'text') { %>
+<%-: section.contents | join | escape_latex %>
 <% } %>
